@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator API Test</title>
+</head>
+<body>
+    <h1>Calculator API Test Form</h1>
+    <form id="calculatorForm">
+        <label for="operation">Operation (add, subtract, multiply, divide):</label>
+        <input type="text" id="operation" name="operation" required>
+        <br><br>
+    
+        <label for="number1">Number 1:</label>
+        <input type="number" id="number1" name="number1" required>
+        <br><br>
+    
+        <label for="number2">Number 2:</label>
+        <input type="number" id="number2" name="number2" required>
+        <br><br>
+    
+        <button type="submit">Calculate</button>
+    </form>
+    
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById('calculatorForm').onsubmit = async function (event) {
+            event.preventDefault(); // Prevent the default form submission
+            
+            // Collect data from the form
+            const operation = document.getElementById('operation').value;
+            const number1 = parseFloat(document.getElementById('number1').value);
+            const number2 = parseFloat(document.getElementById('number2').value);
+        
+            // Prepare the data as a JSON object
+            const data = {
+                operation: operation,
+                number1: number1,
+                number2: number2
+            };
+        
+            // Send the POST request
+            const response = await fetch("http://127.0.0.1:8000/calculate", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data), // Convert the data object to a JSON string
+            });
+        
+            // Handle the response
+            if (!response.ok) {
+                const errorData = await response.json();
+                document.getElementById('result').innerText = `Error: ${errorData.detail}`;
+            } else {
+                const result = await response.json();
+                document.getElementById('result').innerText = `Result: ${result.result}`;
+            }
+        };        
+    </script>
+</body>
+</html>
